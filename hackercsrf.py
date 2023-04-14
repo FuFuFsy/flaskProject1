@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, session,views
 from pymongo import MongoClient
-from flask_wtf import CSRFProtect
-
 import time
 import auth, costants,data_storing,data_acquisition,data_delete,data_update
 from threading import Thread
@@ -12,7 +10,7 @@ from authlogin import login_required
 app = Flask(__name__)
 # encryption relies on secret keys so they could be run
 app.secret_key = "testing"
-CSRFProtect(app)
+
 
 # #connect to your Mongo DB database
 def MongoDB():
@@ -139,7 +137,6 @@ def login():
 def logged_in2():
     if "email" in session:
         email = session["email"]
-        # 因为登录的时候用的email和密码所以session里只有这些
         # 也需要将表格数据刷新
         row = data_acquisition.acquire_data_from_message()
         # data = data_acquisition.acquire_data_from_message(conditionproduct={"nikename":"mike"})
@@ -270,7 +267,7 @@ def modify():
 
 Thread(target=lambda: app.run(port=5001)).start()
 
- # ----------服务2-----------------
+# ----------服务2-----------------
 app2 = Flask('app2')
 
 @app2.route('/hacker')

@@ -14,6 +14,9 @@
 {#                    <td><input type="text" name="nikename"></td>#}
 {#                </tr>#}
                 <tr>
+                    <td> <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" /></td>
+                </tr>
+                <tr>
                     <td>留言信息：</td>
                     <td><textarea name="info" id="" cols="30" rows="10"></textarea></td>
                 </tr>

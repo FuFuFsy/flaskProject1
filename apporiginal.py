@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, session,views
 from pymongo import MongoClient
-from flask_wtf import CSRFProtect
-
 import time
 import auth, costants,data_storing,data_acquisition,data_delete,data_update
 from threading import Thread
@@ -12,7 +10,7 @@ from authlogin import login_required
 app = Flask(__name__)
 # encryption relies on secret keys so they could be run
 app.secret_key = "testing"
-CSRFProtect(app)
+
 
 # #connect to your Mongo DB database
 def MongoDB():
@@ -268,19 +266,19 @@ def modify():
         return f'<script>alert("留言修改失败！");location.href="update?id={id}"</script>'
     print("modify等待完成")
 
-Thread(target=lambda: app.run(port=5001)).start()
+# Thread(target=lambda: app.run(port=5001)).start()
 
  # ----------服务2-----------------
-app2 = Flask('app2')
-
-@app2.route('/hacker')
-def hacker():
-    return render_template('hackerB.html')
-
-app2.run(port=5002)
+# app2 = Flask('app2')
+#
+# @app2.route('/hacker')
+# def hacker():
+#     return render_template('hackerB.html')
+#
+# app2.run(port=5002)
 
 if __name__ == "__main__":
-    # app.run(debug=True, host='0.0.0.0', port=5000)
-    os.environ["WERKZEUG_RUN_MAIN"] = 'true'
-    Thread(target=app).start()
-    app2()
+    app.run(debug=True, host='0.0.0.0', port=5000)
+    # os.environ["WERKZEUG_RUN_MAIN"] = 'true'
+    # Thread(target=app).start()
+    # app2()
