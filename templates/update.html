@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改留言</title>
+</head>
+<body>
+    <center>
+        <h1 style="color: darkred">修改留言</h1>
+        <table>
+            <form action="/modify" method="post">
+                <tr>
+                        <textarea name="id" cols="20" rows="1" style="display:none;">{{data[0].id}}</textarea>
+{#                        <input type="text" readonly name="id" value=>#}
+                    </td>
+                </tr>
+{#                <tr>#}
+{#                    <td>昵称：</td>#}
+{#                    <td>#}
+{#                        <textarea name="nikename" cols="20" rows="1">{{data[0].nikename}}</textarea>#}
+{#                    </td>#}
+{#                </tr>#}
+                <tr>
+                    <td>留言信息：</td>
+                    <td>
+                        <textarea name="info" cols="30" rows="10">{{data[0].info}}
+                        </textarea>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button id="add">修改</button>
+                    </td>
+                </tr>
+            </form>
+
+        </table>
+    </center>
+</body>
+</html>
