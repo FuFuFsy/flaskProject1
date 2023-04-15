@@ -1,3 +1,6 @@
+'''
+这个文件是不包含了token的csrf攻击的文件，加上hacker的websiteB的攻击，要注意的的是需要在静态页面form里去掉token验证add changepassword index login upadate
+'''
 from flask import Flask, render_template, request, url_for, redirect, session,views
 from pymongo import MongoClient
 import time

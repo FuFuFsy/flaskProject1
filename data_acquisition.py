@@ -1,5 +1,5 @@
 """
-This module contains the functions used to acquire data both locally and remotely
+This module contains the functions used to acquire data both locally and remotely （fsy）message part
 """
 
 import json

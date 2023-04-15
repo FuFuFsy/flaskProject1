@@ -1,6 +1,6 @@
 """
 This module contains the functions to store data both locally and
-remotely into a MongoDB database
+remotely into a MongoDB database （fsy）message part
 """
 
 import logging

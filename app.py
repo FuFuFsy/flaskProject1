@@ -100,7 +100,8 @@ def index():
             user_data = records.find_one({"email": email})
             new_email = user_data['email']
             # if registered redirect to logged in as the registered user
-            return render_template('logged_in2.html', email=new_email)
+            row = data_acquisition.acquire_data_from_message()
+            return render_template('logged_in2.html', email=new_email,data=row)
     return render_template('index.html')
 
 
@@ -268,19 +269,66 @@ def modify():
         return f'<script>alert("留言修改失败！");location.href="update?id={id}"</script>'
     print("modify等待完成")
 
-Thread(target=lambda: app.run(port=5001)).start()
+@app.route('/changepassword')
+def changepassword():
+    # 看一下怎么阻止直接访问
+    if session.get("email"):
+        # 当前处于登陆状态
+        print(session.get('email'))
+        return render_template('changepassword.html')
+    else:
+        # 加一个请先登录？？？
+        return redirect(url_for("login"))
 
- # ----------服务2-----------------
-app2 = Flask('app2')
+@app.route('/modifypw', methods=['POST'])
+def modifypw():
+    # 如果获得的修改密码的逻辑问题（看之前咋写的）
+    # 如果符合逻辑就对密码进行修改
 
-@app2.route('/hacker')
-def hacker():
-    return render_template('hackerB.html')
+    # 获得表单数据
+    password1 = request.form.get("password1")
+    password2 = request.form.get("password2")
+    # 获得当前用户的email
+    email=session.get('email')
+    # if found in database showcase that it's found
+    email_found = records.find_one({"email": email})
+    # 如果获得的修改密码的逻辑问题（看之前咋写的）-----可以修改一下检验是否符合格式
+    if email_found:
+        if password1 != password2:
+            message = 'Passwords should match!'
+            return render_template('changepassword.html', message=message)
+        elif (password1==''or password2==''):
+            message = 'Passwords should not be empty'
+            return render_template('changepassword.html',message=message)
+        else:
+            records.update_one({'email': email}, {'$set': {'password': password2}})
+            # find the new created account and its email
+            user_data = records.find_one({"email": email})
+            new_email = user_data['email']
+            message = '修改成功'
+            row = data_acquisition.acquire_data_from_message()
+            # if registered redirect to logged in as the registered user
+            return render_template('logged_in2.html', email=new_email, message=message,data=row)
 
-app2.run(port=5002)
+    else:
+        message = 'This email does not already exist in database'
+        return render_template('changepassword.html', message=message)
+
+
+
+# Thread(target=lambda: app.run(port=5001)).start()
+#
+#  # ----------服务2-----------------
+# app2 = Flask('app2')
+#
+# @app2.route('/hacker')
+# def hacker():
+#     return render_template('hackerB.html')
+#
+# app2.run(port=5002)
 
 if __name__ == "__main__":
-    # app.run(debug=True, host='0.0.0.0', port=5000)
-    os.environ["WERKZEUG_RUN_MAIN"] = 'true'
-    Thread(target=app).start()
-    app2()
+    app.run(debug=True, host='0.0.0.0', port=5000)
+    # os.environ["WERKZEUG_RUN_MAIN"] = 'true'
+    # Thread(target=app).start()
+    # app2()

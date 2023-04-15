@@ -1,5 +1,5 @@
 """
-This module contains costants that are been used inside the all repository
+This module contains costants that are been used inside the all repository（fsy）message part
 """
 
 # import datetime

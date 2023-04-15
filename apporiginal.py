@@ -1,3 +1,6 @@
+'''
+这个文件是最初版本的网站脆弱的网站，还没有增加修改密码，验证码，邮箱验证，格式验证，管理员端的事情（看一下cookie的获取）
+'''
 from flask import Flask, render_template, request, url_for, redirect, session,views
 from pymongo import MongoClient
 import time

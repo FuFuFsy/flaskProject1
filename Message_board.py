@@ -1,3 +1,6 @@
+'''
+这个页面是用来测试留言板功能的，所以纯测试的
+'''
 from flask import Flask,render_template,request
 import time
 import auth, costants,data_storing,data_acquisition

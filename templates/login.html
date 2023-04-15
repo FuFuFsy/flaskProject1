@@ -19,6 +19,8 @@
       <label for="InputPassword">Password</label>
       <input type="password" name="password" class="form-control" id="InputPassword" placeholder="Password">
   </div>
+{#    这里是token的位置#}
+     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 {% endblock %}

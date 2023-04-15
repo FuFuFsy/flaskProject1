@@ -30,8 +30,9 @@
     <input type="password" name="password2" class="form-control" id="InputPassword2" placeholder="Repeat Password">
 
     </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-
+{#    这里是token的位置#}
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <button type="submit" class="btn btn-primary">Submit</button><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
 </form>
 

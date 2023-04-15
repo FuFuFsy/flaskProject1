@@ -1,5 +1,5 @@
 """
-This module contains functions to delete data both locally and remotely
+This module contains functions to delete data both locally and remotely （fsy）message part
 """
 import json
 import logging

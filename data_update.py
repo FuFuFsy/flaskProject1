@@ -1,5 +1,5 @@
 """
-This module contains functions to update data both locally and remotely
+This module contains functions to update data both locally and remotely （fsy）message part
 """
 import json
 import logging

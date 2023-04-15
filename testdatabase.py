@@ -1,3 +1,6 @@
+'''
+这个页面是用来测试一下数据库功能的，测试
+'''
 import sys
 import ssl
 # from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
