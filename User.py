@@ -1,10 +1,17 @@
-from flask import Flask, render_template, request, url_for, redirect, session,views,Blueprint, make_response
+'''
+这个网页是用来测试验证码功能的，已测试成功
+'''
+from flask import Flask, render_template, request, url_for, redirect, session,views
 from pymongo import MongoClient
-from io import BytesIO
 from flask_wtf import CSRFProtect
-from utility import ImageCode
+import random
 import time
 import auth, costants,data_storing,data_acquisition,data_delete,data_update
+from io import BytesIO
+from flask import Blueprint, make_response, session
+from utility import ImageCode
+
+# from module.users import Users
 from threading import Thread
 import os
 from authlogin import login_required
@@ -14,9 +21,7 @@ app = Flask(__name__)
 # encryption relies on secret keys so they could be run
 app.secret_key = "testing"
 CSRFProtect(app)
-# 看一下这是干嘛的有没有和app那个冲突？？？？
 user = Blueprint('user', __name__)
-
 # #connect to your Mongo DB database
 def MongoDB():
     # client = MongoClient("mongodb+srv://xmj_jessie:123098111@cluster0.ohtke6p.mongodb.net/?retryWrites=true&w=majority")
@@ -32,96 +37,56 @@ def MongoDB():
 
 records = MongoDB()
 
+
+##Connect with Docker Image###
+# def dockerMongoDB():
+#     client = MongoClient(host='test_mongodb',
+#                             port=27017,
+#                             username='root',
+#                             password='pass',
+#                             authSource="admin")
+#     db = client.users
+#     pw = "test123"
+#     hashed = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
+#     records = db.register
+#     records.insert_one({
+#         "name": "Test Test",
+#         "email": "test@yahoo.com",
+#         "password": hashed
+#     })
+#     return records
+
+# records = dockerMongoDB()
+
+# pw = "test123"
+# hashed = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
+# records.insert_one({
+#         "name": "Test Test",
+#         "email": "test@yahoo.com",
+#         "password": hashed
+#     })
+
 # assign URLs to have a particular route
-@app.route("/", methods=['post', 'get'])
+@app.route("/",methods=["POST", "GET"])
 def index():
-    message = ''
-    # if method post in index
-    if "email" in session:
-        return redirect(url_for("logged_in2"))
-    if request.method == "POST":
-        user = request.form.get("fullname")
-        email = request.form.get("email")
-
-        password1 = request.form.get("password1")
-        password2 = request.form.get("password2")
-        # if found in database showcase that it's found
-        user_found = records.find_one({"name": user})
-        email_found = records.find_one({"email": email})
-        if user_found:
-            message = 'There already is a user by that name'
-            return render_template('index.html', message=message)
-        if email_found:
-            message = 'This email already exists in database'
-            return render_template('index.html', message=message)
-        if password1 != password2:
-            message = 'Passwords should match!'
-            return render_template('index.html', message=message)
-        else:
-            # hash the password and encode it
-            # hashed = bcrypt.hashpw(password2.encode('utf-8'), bcrypt.gensalt())
-
-            # assing them in a dictionary in key value pairs
-            # user_input = {'name': user, 'email': email, 'password': hashed}
-            #加一下用户的id
-            num=records.find().count()
-            user_input = {'name': user, 'email': email, 'password': password2}
-            user_input['id']=str(num+1)
-            # insert it in the record collection
-            records.insert_one(user_input)
-
-            # find the new created account and its email
-            user_data = records.find_one({"email": email})
-            new_email = user_data['email']
-            # if registered redirect to logged in as the registered user
-            row = data_acquisition.acquire_data_from_message()
-            return render_template('logged_in2.html', email=new_email,data=row)
-    return render_template('index.html')
-
-# 在登录界面加一个验证码
-@app.route("/login", methods=["POST", "GET"])
-def login():
-    # 代码逻辑
-    # 如果存在session里直接就跳转到登录成功页面
-    # 如果用的是Post方法（）---获得email，password和vcode
-    # 如果找到对应的
-    message = 'Please login to your account'
-    if "email" in session:
-        return redirect(url_for("logged_in2"))
-
-    if request.method == "POST":
-        email = request.form.get("email")
-        password = request.form.get("password")
-        Vcode = request.form.get("Vcode")
-        print("Vcode")
-        print(Vcode)
-        icode=session.get('image')
-        print("icode")
-        print(icode)
-        if icode == Vcode:
-            # check if email exists in database
-            email_found = records.find_one({"email": email})
-            if email_found:
-                email_val = email_found['email']
-                passwordcheck = email_found['password']
-                # encode the password and check if it matches
-                # if bcrypt.checkpw(password.encode('utf-8'), passwordcheck):
-                if password == passwordcheck:
-                    session["email"] = email_val
-                    return redirect(url_for('logged_in2'))
-                else:
-                    if "email" in session:
-                        return redirect(url_for("logged_in2"))
-                    message = 'Wrong password'
-                    return render_template('login.html', message=message)
-            else:
-                message = 'Email not found'
-                return render_template('login.html', message=message)
-        else:
-            message = 'Validation code error'
+    message='请登录'
+    Vcode=request.form.get("Vcode")
+    print(Vcode)
+    print(session.get('image'))
+    if Vcode:
+        if session.get('image') != Vcode:
+            message = '验证码错误'
             print('错误')
-            return render_template("login.html", message=message)
-    return render_template('login.html', message=message)
+            return render_template("image.html", message=message)
+        else:
+            message = '验证码正确'
+            print('正确')
+            return render_template("image.html", message=message)
+    else:
+        return render_template("image.html", message=message)
+
+
+
 
 @app.route('/vcode')
 def vcode():
@@ -136,6 +101,37 @@ def vcode():
     # 将验证码字符串储存在session中
     session['image'] = str
     return response
+
+
+@app.route("/login", methods=["POST", "GET"])
+def login():
+    message = 'Please login to your account'
+    if "email" in session:
+        return redirect(url_for("logged_in2"))
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        # check if email exists in database
+        email_found = records.find_one({"email": email})
+        if email_found:
+            email_val = email_found['email']
+            passwordcheck = email_found['password']
+            # encode the password and check if it matches
+            # if bcrypt.checkpw(password.encode('utf-8'), passwordcheck):
+            if password == passwordcheck:
+                session["email"] = email_val
+                return redirect(url_for('logged_in2'))
+            else:
+                if "email" in session:
+                    return redirect(url_for("logged_in2"))
+                message = 'Wrong password'
+                return render_template('login.html', message=message)
+        else:
+            message = 'Email not found'
+            return render_template('login.html', message=message)
+    return render_template('login.html', message=message)
 
 
 @app.route('/logged_in2')
